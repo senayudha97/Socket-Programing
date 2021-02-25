@@ -1,0 +1,73 @@
+<html lang="en">
+    <head>
+    <title>Socket Programing</title>
+    <meta charset="UTF-8">
+    <meta http-equiv="X-UA-Compatible" content="IE=edge">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <link rel="stylesheet" href="https://stackpath.bootstrapcdn.com/bootstrap/4.3.1/css/bootstrap.min.css" integrity="sha384-ggOyR0iXCbMQv3Xipma34MD+dH/1fQ784/j6cY/iJTQUOhcWr7x9JvoRxT2MZw1T" crossorigin="anonymous">
+    <script src="https://stackpath.bootstrapcdn.com/bootstrap/4.3.1/js/bootstrap.min.js" integrity="sha384-JjSmVgyd0p3pXB1rRibZUAYoIIy6OrQ6VrjIEaFf/nJGzIxFDsf4x0xIM+B07jRM" crossorigin="anonymous"></script>
+    <script src="https://code.jquery.com/jquery-3.5.1.js" integrity="sha256-QWo7LDvxbWT2tbbQ97B53yJnYU3WhH/C8ycbRAkjPDc=" crossorigin="anonymous"></script>
+    <script src="/socket.io/socket.io.js"></script>
+    <style>
+        body{
+            margin-top: 150px;
+        }
+        #messageArea{
+            display: none;
+        }
+    </style>
+</head>
+<body>
+    <div class="container">
+        <div class="row">
+            <!-- <div class="col-md-4">
+                <div class="card card-body bg-primary">
+                    <h3 class="text-white"> Online Users </h3>
+                    <ul class="list-group" id="users"></ul>
+                </div>
+            </div> -->
+
+            <div class="col-md-8">
+                <div class="card" id="chat"></div>
+                    <form id="messageForm">
+                        <div class="form-group">
+                            <label for="">Enter Message</label>
+                            <select  id="room" class="form-control">
+                                <option value="" selected>--Select Room--</option>
+                                <option value="Indonesia">Indonesia</option>
+                                <option value="Japan">Japan</option>
+                                <option value="USA">USA</option>
+                            </select>
+                            <input type="text" placeholder="Usename" class="form-control" id="username">
+                            <textarea id="message" class="form-control"></textarea>
+                            <br>
+                            <input type="submit" class="btn btn-primary" value="Send Message">
+                        </div>
+                    </form>
+            </div>
+        </div>
+    </div>
+
+
+    <script>
+        $(function () {
+            var socket = io.connect();
+            var chat = $('#chat');
+            var messageForm = $('#messageForm');
+            var username = $('#username');
+            var message = $('#message');
+            var room = $('#room');
+
+            messageForm.submit(function (e) {
+                e.preventDefault(); 
+                socket.emit('send message', {"username" : username.val(), "message" : message.val(),"room" : room.val()});
+                message.val('');
+            });
+
+            socket.on('new message', function (data) {
+                chat.append('<div class="list-group-item">'+data.usr+':'+data.msg+'</div>');
+            });
+        });
+    </script>
+</body>
+</html>
